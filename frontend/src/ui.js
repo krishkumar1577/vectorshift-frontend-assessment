@@ -10,6 +10,11 @@ import { InputNode } from './nodes/inputNode';
 import { LLMNode } from './nodes/llmNode';
 import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
+import { TransformNode } from './nodes/transformNode';
+import { FilterNode } from './nodes/filterNode';
+import { ApiNode } from './nodes/apiNode';
+import { ConditionalNode } from './nodes/conditionalNode';
+import { NoteNode } from './nodes/noteNode';
 
 import 'reactflow/dist/style.css';
 
@@ -20,6 +25,11 @@ const nodeTypes = {
   llm: LLMNode,
   customOutput: OutputNode,
   text: TextNode,
+  transform: TransformNode,
+  filter: FilterNode,
+  api: ApiNode,
+  conditional: ConditionalNode,
+  note: NoteNode,
 };
 
 const selector = (state) => ({
@@ -80,7 +90,7 @@ export const PipelineUI = () => {
             addNode(newNode);
           }
         },
-        [reactFlowInstance]
+        [reactFlowInstance, getNodeID, addNode]
     );
 
     const onDragOver = useCallback((event) => {
@@ -90,7 +100,7 @@ export const PipelineUI = () => {
 
     return (
         <>
-        <div ref={reactFlowWrapper} style={{width: '100wv', height: '70vh'}}>
+        <div ref={reactFlowWrapper} className="flex-1 relative bg-background-light bg-grid-pattern overflow-auto">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -105,9 +115,16 @@ export const PipelineUI = () => {
                 snapGrid={[gridSize, gridSize]}
                 connectionLineType='smoothstep'
             >
-                <Background color="#aaa" gap={gridSize} />
-                <Controls />
-                <MiniMap />
+                <Background color="#cbd5e1" gap={gridSize} size={1} />
+                <Controls className="bg-white shadow-floating rounded-lg" />
+                <MiniMap 
+                    className="!absolute !bottom-8 !right-8 !w-32 !h-20 bg-surface-light border border-border-light rounded-xl shadow-floating overflow-hidden" 
+                    style={{ position: 'absolute', bottom: '2rem', right: '2rem', width: '8rem', height: '5rem' }}
+                    nodeColor="#111827"
+                    maskColor="rgba(249, 250, 251, 0.8)"
+                    zoomable
+                    pannable
+                />
             </ReactFlow>
         </div>
         </>
