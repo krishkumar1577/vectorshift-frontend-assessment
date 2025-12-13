@@ -11,9 +11,13 @@ app = FastAPI()
 
 pipeline_history = []
 
+# Get allowed origins from environment or default to all
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
+origins_list = allowed_origins.split(",") if allowed_origins != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("ALLOWED_ORIGINS", "*").split(",")],
+    allow_origins=origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
