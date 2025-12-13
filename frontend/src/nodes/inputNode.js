@@ -8,6 +8,7 @@ export const InputNode = ({ id, data }) => {
       id={id}
       data={data}
       title="Input"
+      description="Receives input data from external sources or user input. Configure the input name and type."
       fields={[
         {
           name: 'inputName',

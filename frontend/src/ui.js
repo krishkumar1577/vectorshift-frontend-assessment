@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 import { useState, useRef, useCallback } from 'react';
-import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
+import ReactFlow, { Controls, Background, MiniMap, MarkerType } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { InputNode } from './nodes/inputNode';
@@ -114,14 +114,24 @@ export const PipelineUI = () => {
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 connectionLineType='smoothstep'
+                defaultEdgeOptions={{
+                    type: 'smoothstep',
+                    animated: true,
+                    style: { stroke: '#94a3b8', strokeWidth: 2 },
+                    markerEnd: { type: MarkerType.Arrow, color: '#94a3b8' }
+                }}
             >
                 <Background color="#cbd5e1" gap={gridSize} size={1} />
                 <Controls className="bg-white shadow-floating rounded-lg" />
                 <MiniMap 
-                    className="!absolute !bottom-8 !right-8 !w-32 !h-20 bg-surface-light border border-border-light rounded-xl shadow-floating overflow-hidden" 
-                    style={{ position: 'absolute', bottom: '2rem', right: '2rem', width: '8rem', height: '5rem' }}
                     nodeColor="#111827"
                     maskColor="rgba(249, 250, 251, 0.8)"
+                    style={{ 
+                        backgroundColor: 'white',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }}
                     zoomable
                     pannable
                 />

@@ -9,6 +9,7 @@ export const ConditionalNode = ({ id, data }) => {
       id={id}
       data={data}
       title="Conditional"
+      description="Routes data based on conditions. If the condition is true, data goes to the true output; otherwise to the false output."
       fields={[
         {
           name: 'operator',

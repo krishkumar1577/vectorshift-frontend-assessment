@@ -7,8 +7,7 @@ export const LLMNode = ({ id, data }) => {
     <BaseNode
       id={id}
       data={data}
-      title="LLM"
-      handles={[
+      title="LLM"      description="Connects to a Large Language Model (GPT, Claude, etc.) to generate AI-powered responses."      handles={[
         { type: 'target', id: 'system', style: { top: `${100/3}%` } },
         { type: 'target', id: 'prompt', style: { top: `${200/3}%` } },
         { type: 'source', id: 'response' }

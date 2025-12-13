@@ -8,8 +8,7 @@ export const NoteNode = ({ id, data }) => {
     <BaseNode
       id={id}
       data={data}
-      title="📝 Note"
-      fields={[
+      title="Note"      description="Add comments, documentation, or reminders to your workflow. Notes don't affect data flow."      fields={[
         {
           name: 'note',
           label: 'Content',

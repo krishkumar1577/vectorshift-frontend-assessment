@@ -9,6 +9,7 @@ export const ApiNode = ({ id, data }) => {
       id={id}
       data={data}
       title="API Call"
+      description="Makes HTTP requests to external APIs. Configure the endpoint, method, and optional request body."
       fields={[
         {
           name: 'method',

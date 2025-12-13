@@ -11,6 +11,7 @@ import { Handle, Position } from 'reactflow';
  * @param {string} props.id - Node ID
  * @param {Object} props.data - Node data
  * @param {string} props.title - Node title
+ * @param {string} props.description - Node description (optional, collapsable)
  * @param {Array} props.fields - Field configurations
  * @param {Array} props.handles - Handle configurations
  * @param {Object} props.style - Custom styles
@@ -20,11 +21,14 @@ export const BaseNode = ({
   id, 
   data, 
   title, 
+  description,
   fields = [], 
   handles = [],
   style = {},
   children 
 }) => {
+  const [showDescription, setShowDescription] = useState(false);
+  
   // Initialize state for all fields
   const [fieldValues, setFieldValues] = useState(() => {
     const initialValues = {};
@@ -102,12 +106,44 @@ export const BaseNode = ({
     }
   };
 
+  // Get border color based on node type from data
+  const getBorderColor = () => {
+    if (style.borderColor) return '';
+    
+    const nodeType = data?.nodeType || title?.toLowerCase();
+    
+    switch (nodeType) {
+      case 'custominput':
+      case 'input':
+        return 'border-blue-400';
+      case 'customoutput':
+      case 'output':
+        return 'border-green-400';
+      case 'llm':
+        return 'border-purple-400';
+      case 'text':
+        return 'border-yellow-400';
+      case 'transform':
+        return 'border-indigo-400';
+      case 'filter':
+        return 'border-pink-400';
+      case 'api':
+        return 'border-cyan-400';
+      case 'conditional':
+        return 'border-orange-400';
+      case 'note':
+        return 'border-gray-400';
+      default:
+        return 'border-blue-400';
+    }
+  };
+
   // Merge custom styles with defaults
   const customStyleClasses = style.backgroundColor ? '' : 'bg-white';
-  const borderColor = style.backgroundColor ? 'border-gray-200' : 'border-gray-300';
+  const borderColor = getBorderColor();
   
   return (
-    <div className={`w-[200px] min-h-[80px] border ${borderColor} rounded-lg p-3 shadow-md hover:shadow-lg transition-shadow ${customStyleClasses}`} style={style}>
+    <div className={`w-[200px] min-h-[80px] border-2 ${borderColor} rounded-lg p-3 shadow-node hover:shadow-node-hover transition-shadow ${customStyleClasses}`} style={style}>
       {/* Render input handles */}
       {handles
         .filter(h => h.type === 'target')
@@ -122,10 +158,30 @@ export const BaseNode = ({
           />
         ))}
 
-      {/* Title */}
+      {/* Title with optional description toggle */}
       {title && (
-        <div className="font-bold mb-2 text-sm text-gray-800">
-          {title}
+        <div className="mb-2">
+          <div className="flex items-center justify-between">
+            <div className="font-bold text-sm text-gray-800">
+              {title}
+            </div>
+            {description && (
+              <button
+                onClick={() => setShowDescription(!showDescription)}
+                className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+                title={showDescription ? "Hide description" : "Show description"}
+              >
+                <span className="material-symbols-outlined text-base text-gray-400 hover:text-gray-600">
+                  {showDescription ? 'expand_less' : 'info'}
+                </span>
+              </button>
+            )}
+          </div>
+          {description && showDescription && (
+            <div className="mt-1 text-[10px] text-gray-500 leading-relaxed border-l-2 border-gray-300 pl-2">
+              {description}
+            </div>
+          )}
         </div>
       )}
 

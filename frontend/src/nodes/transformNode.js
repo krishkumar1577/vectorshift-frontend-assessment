@@ -9,6 +9,7 @@ export const TransformNode = ({ id, data }) => {
       id={id}
       data={data}
       title="Transform"
+      description="Transforms input data using various operations like uppercase, lowercase, trim, or reverse."
       fields={[
         {
           name: 'operation',

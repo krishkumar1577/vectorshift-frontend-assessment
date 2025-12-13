@@ -38,7 +38,10 @@ export const PipelineToolbar = () => {
             {/* Expandable Node Palette */}
             {isExpanded && (
                 <div className="w-64 bg-surface-light border-r border-border-light p-4 overflow-y-auto z-40">
-                    <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Node Palette</h2>
+                    <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide flex items-center justify-between">
+                        Node Palette
+                        <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full font-normal">9</span>
+                    </h2>
                     <div className="space-y-2">
                         <div className="text-xs text-gray-500 font-medium mb-2">ORIGINAL NODES</div>
                         <DraggableNode type='customInput' label='Input' />

@@ -8,6 +8,7 @@ export const OutputNode = ({ id, data }) => {
       id={id}
       data={data}
       title="Output"
+      description="Sends processed data to external destinations or displays results to users."
       fields={[
         {
           name: 'outputName',

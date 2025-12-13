@@ -9,6 +9,7 @@ export const FilterNode = ({ id, data }) => {
       id={id}
       data={data}
       title="Filter"
+      description="Filters data based on specified conditions. Only matching items pass through to the output."
       fields={[
         {
           name: 'condition',
