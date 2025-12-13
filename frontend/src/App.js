@@ -2,27 +2,46 @@ import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
 import { SubmitButton } from './submit';
 import { TemplateBadge } from './TemplateBadge';
+import { ReactFlowProvider } from 'reactflow';
+import { useState, useRef, useEffect } from 'react';
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [pipelineName, setPipelineName] = useState('Pipeline Builder');
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleNameChange = (e) => {
+    setPipelineName(e.target.value);
+  };
+
+  const handleNameBlur = () => {
+    setIsEditing(false);
+    if (!pipelineName.trim()) {
+      setPipelineName('Pipeline Builder');
+    }
+  };
+
+  const handleNameKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleNameBlur();
+    } else if (e.key === 'Escape') {
+      setPipelineName(pipelineName);
+      setIsEditing(false);
+    }
+  };
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background-light text-gray-900 transition-colors duration-200">
-      {/* Header */}
-      <header className="flex flex-col z-50 shadow-sm border-b border-border-light bg-surface-light">
-        {/* Top Black Bar */}
-        <div className="h-10 bg-black text-white text-xs flex items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <span className="font-bold tracking-wider">VectorShift</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>13 days left in your trial</span>
-            <div className="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-green-500 w-1/3"></div>
-            </div>
-            <span>03/1000 executions</span>
-            <button className="hover:text-green-400 transition-colors">Upgrade now →</button>
-          </div>
-        </div>
-        
+    <ReactFlowProvider>
+    <div className={`h-screen flex flex-col overflow-hidden ${darkMode ? 'bg-gray-900 text-white' : 'bg-background-light text-gray-900'} transition-colors duration-200`}>
+      <header className={`flex flex-col z-50 shadow-sm border-b ${darkMode ? 'border-gray-700 bg-gray-800' : 'border-border-light bg-surface-light'}`}>
         {/* Main Header */}
         <div className="h-14 flex items-center justify-between px-4">
           {/* Breadcrumb */}
@@ -31,29 +50,43 @@ function App() {
               <span className="material-symbols-outlined">home</span>
             </button>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-600">My Projects</span>
+            <span className="text-gray-600">VectorShift</span>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-600">CRM Lead Generation</span>
-            <span className="text-gray-400">/</span>
-            <span className="font-semibold text-gray-900 flex items-center gap-2">
-              AI Pipeline 2.4.67
-              <span className="material-symbols-outlined text-gray-400 text-base">edit</span>
-            </span>
-          </div>
-          
-          {/* Tabs */}
-          <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-            <button className="px-4 py-1 text-xs font-semibold bg-white shadow-sm rounded-md text-gray-900">Editor</button>
-            <button className="px-4 py-1 text-xs font-medium text-gray-500 hover:text-gray-900">Executions</button>
-            <button className="px-4 py-1 text-xs font-medium text-gray-500 hover:text-gray-900">Evaluations</button>
+            <div className="font-semibold text-gray-900 flex items-center gap-2">
+              {isEditing ? (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={pipelineName}
+                  onChange={handleNameChange}
+                  onBlur={handleNameBlur}
+                  onKeyDown={handleNameKeyDown}
+                  className="px-2 py-1 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ minWidth: '150px' }}
+                />
+              ) : (
+                <>
+                  {pipelineName}
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="material-symbols-outlined text-gray-400 text-base hover:text-gray-600 cursor-pointer"
+                  >
+                    edit
+                  </button>
+                </>
+              )}
+            </div>
           </div>
           
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 mr-2">
-              <div className="w-2 h-2 rounded-full border border-gray-400"></div>
-              <span className="text-xs text-gray-500">Inactive</span>
-            </div>
+            <button 
+              onClick={() => setDarkMode(!darkMode)}
+              className="px-3 py-1.5 text-sm font-medium border border-border-light rounded-md hover:bg-gray-50 transition-colors"
+              title={darkMode ? 'Light Mode' : 'Dark Mode'}
+            >
+              {darkMode ? '☀️ Light' : '🌙 Dark'}
+            </button>
             <button className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-600 border border-border-light rounded-md hover:bg-gray-50">
               <span className="material-symbols-outlined text-base">share</span> Share
             </button>
@@ -73,11 +106,12 @@ function App() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden relative">
         <PipelineToolbar />
-        <PipelineUI />
+        <PipelineUI darkMode={darkMode} />
         <SubmitButton />
         <TemplateBadge />
       </div>
     </div>
+    </ReactFlowProvider>
   );
 }
 

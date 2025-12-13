@@ -1,10 +1,12 @@
 // submit.js
 
 import { useStore } from './store';
+import { useReactFlow } from 'reactflow';
 
 export const SubmitButton = () => {
     const nodes = useStore((state) => state.nodes);
     const edges = useStore((state) => state.edges);
+    const { zoomIn, zoomOut, fitView } = useReactFlow();
 
     const handleSubmit = async () => {
         try {
@@ -39,25 +41,51 @@ export const SubmitButton = () => {
         }
     };
 
+    const handleClearCanvas = () => {
+        if (window.confirm('Clear all nodes and connections?')) {
+            useStore.getState().clearCanvas();
+        }
+    };
+
     return (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1 bg-surface-light border border-border-light rounded-xl shadow-floating z-50">
             <div className="flex items-center border-r border-border-light pr-2 mr-1 gap-1">
-                <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Zoom In">
+                <button 
+                    onClick={() => zoomIn({ duration: 200 })} 
+                    className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" 
+                    title="Zoom In"
+                >
                     <span className="material-symbols-outlined text-lg">add</span>
                 </button>
-                <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Zoom Out">
+                <button 
+                    onClick={() => zoomOut({ duration: 200 })} 
+                    className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" 
+                    title="Zoom Out"
+                >
                     <span className="material-symbols-outlined text-lg">remove</span>
                 </button>
-                <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Fit View">
+                <button 
+                    onClick={() => fitView({ duration: 200, padding: 0.2 })} 
+                    className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" 
+                    title="Fit View"
+                >
                     <span className="material-symbols-outlined text-lg">fit_screen</span>
                 </button>
             </div>
             
             <div className="flex items-center border-r border-border-light pr-2 mr-1 gap-1">
-                <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Undo">
+                <button 
+                    onClick={() => alert('Undo feature coming soon!')} 
+                    className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" 
+                    title="Undo"
+                >
                     <span className="material-symbols-outlined text-lg">undo</span>
                 </button>
-                <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Redo">
+                <button 
+                    onClick={() => alert('Redo feature coming soon!')} 
+                    className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" 
+                    title="Redo"
+                >
                     <span className="material-symbols-outlined text-lg">redo</span>
                 </button>
             </div>
@@ -70,8 +98,12 @@ export const SubmitButton = () => {
                 Submit
             </button>
             
-            <button className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors ml-1">
-                <span className="material-symbols-outlined text-lg">bolt</span>
+            <button 
+                onClick={handleClearCanvas}
+                className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors ml-1"
+                title="Clear Canvas"
+            >
+                <span className="material-symbols-outlined text-lg">delete_sweep</span>
             </button>
         </div>
     );

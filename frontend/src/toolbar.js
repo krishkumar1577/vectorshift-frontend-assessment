@@ -2,9 +2,25 @@
 
 import { DraggableNode } from './draggableNode';
 import { useState } from 'react';
+import { useStore } from './store';
 
 export const PipelineToolbar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { getNodeID, addNode } = useStore((state) => ({
+        getNodeID: state.getNodeID,
+        addNode: state.addNode,
+    }));
+
+    const handleQuickAdd = (type) => {
+        const nodeID = getNodeID(type);
+        const newNode = {
+            id: nodeID,
+            type: type,
+            position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 },
+            data: { id: nodeID, nodeType: type }
+        };
+        addNode(newNode);
+    };
 
     return (
         <>
@@ -23,13 +39,25 @@ export const PipelineToolbar = () => {
                 <div className="w-8 h-[1px] bg-gray-200"></div>
                 
                 <nav className="flex flex-col gap-4 w-full items-center">
-                    <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" title="Cloud">
+                    <button 
+                        onClick={() => handleQuickAdd('cloud')}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" 
+                        title="Add Cloud Storage"
+                    >
                         ☁
                     </button>
-                    <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" title="API">
+                    <button 
+                        onClick={() => handleQuickAdd('api')}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" 
+                        title="Add API Call"
+                    >
                         🌐
                     </button>
-                    <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" title="Code">
+                    <button 
+                        onClick={() => handleQuickAdd('code')}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 transition-colors" 
+                        title="Add Code Block"
+                    >
                         &lt;/&gt;
                     </button>
                 </nav>
@@ -40,7 +68,7 @@ export const PipelineToolbar = () => {
                 <div className="w-64 bg-surface-light border-r border-border-light p-4 overflow-y-auto z-40">
                     <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide flex items-center justify-between">
                         Node Palette
-                        <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full font-normal">9</span>
+                        <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full font-normal">11</span>
                     </h2>
                     <div className="space-y-2">
                         <div className="text-xs text-gray-500 font-medium mb-2">ORIGINAL NODES</div>
@@ -55,6 +83,8 @@ export const PipelineToolbar = () => {
                         <DraggableNode type='api' label='API Call' />
                         <DraggableNode type='conditional' label='Conditional' />
                         <DraggableNode type='note' label='Note' />
+                        <DraggableNode type='code' label='Code' />
+                        <DraggableNode type='cloud' label='Cloud Storage' />
                     </div>
                 </div>
             )}

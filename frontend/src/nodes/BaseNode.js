@@ -133,6 +133,10 @@ export const BaseNode = ({
         return 'border-orange-400';
       case 'note':
         return 'border-gray-400';
+      case 'code':
+        return 'border-sky-400';
+      case 'cloud':
+        return 'border-blue-500';
       default:
         return 'border-blue-400';
     }

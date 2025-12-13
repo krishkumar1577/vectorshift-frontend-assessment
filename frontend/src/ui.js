@@ -2,7 +2,7 @@
 // Displays the drag-and-drop UI
 // --------------------------------------------------
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, MiniMap, MarkerType } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
@@ -15,6 +15,8 @@ import { FilterNode } from './nodes/filterNode';
 import { ApiNode } from './nodes/apiNode';
 import { ConditionalNode } from './nodes/conditionalNode';
 import { NoteNode } from './nodes/noteNode';
+import { CodeNode } from './nodes/codeNode';
+import { CloudNode } from './nodes/cloudNode';
 
 import 'reactflow/dist/style.css';
 
@@ -30,6 +32,8 @@ const nodeTypes = {
   api: ApiNode,
   conditional: ConditionalNode,
   note: NoteNode,
+  code: CodeNode,
+  cloud: CloudNode,
 };
 
 const selector = (state) => ({
@@ -42,7 +46,7 @@ const selector = (state) => ({
   onConnect: state.onConnect,
 });
 
-export const PipelineUI = () => {
+export const PipelineUI = ({ darkMode }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const {
@@ -98,9 +102,42 @@ export const PipelineUI = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    // Handle delete key press to remove selected nodes and edges
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Delete' || event.key === 'Backspace') {
+                const selectedNodes = nodes.filter(node => node.selected);
+                const selectedEdges = edges.filter(edge => edge.selected);
+                
+                if (selectedNodes.length > 0 || selectedEdges.length > 0) {
+                    event.preventDefault();
+                    
+                    // Remove selected nodes
+                    if (selectedNodes.length > 0) {
+                        const nodeIdsToDelete = selectedNodes.map(node => node.id);
+                        onNodesChange(
+                            nodeIdsToDelete.map(id => ({ type: 'remove', id }))
+                        );
+                    }
+                    
+                    // Remove selected edges
+                    if (selectedEdges.length > 0) {
+                        const edgeIdsToDelete = selectedEdges.map(edge => edge.id);
+                        onEdgesChange(
+                            edgeIdsToDelete.map(id => ({ type: 'remove', id }))
+                        );
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [nodes, edges, onNodesChange, onEdgesChange]);
+
     return (
         <>
-        <div ref={reactFlowWrapper} className="flex-1 relative bg-background-light bg-grid-pattern overflow-auto">
+        <div ref={reactFlowWrapper} className={`flex-1 relative overflow-auto ${darkMode ? 'bg-gray-800' : 'bg-background-light bg-grid-pattern'}`}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -121,14 +158,18 @@ export const PipelineUI = () => {
                     markerEnd: { type: MarkerType.Arrow, color: '#94a3b8' }
                 }}
             >
-                <Background color="#cbd5e1" gap={gridSize} size={1} />
-                <Controls className="bg-white shadow-floating rounded-lg" />
+                <Background 
+                    color={darkMode ? '#4B5563' : '#cbd5e1'} 
+                    gap={gridSize} 
+                    size={1} 
+                />
+                <Controls className={`shadow-floating rounded-lg ${darkMode ? 'bg-gray-700 text-white' : 'bg-white'}`} />
                 <MiniMap 
-                    nodeColor="#111827"
-                    maskColor="rgba(249, 250, 251, 0.8)"
+                    nodeColor={darkMode ? '#374151' : '#111827'}
+                    maskColor={darkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(249, 250, 251, 0.8)'}
                     style={{ 
-                        backgroundColor: 'white',
-                        border: '1px solid #E5E7EB',
+                        backgroundColor: darkMode ? '#1F2937' : 'white',
+                        border: `1px solid ${darkMode ? '#374151' : '#E5E7EB'}`,
                         borderRadius: '12px',
                         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
                     }}
