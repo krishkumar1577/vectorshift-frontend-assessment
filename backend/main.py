@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -9,7 +13,7 @@ pipeline_history = []
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[os.getenv("ALLOWED_ORIGINS", "*").split(",")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
